@@ -43,6 +43,7 @@ function products_menu() {
     array('data' => t('Created'),'field' => 'created'),
     array('data' => t('Changed'),'field' => 'changed'),
 	array('data' => t('Type'),'field' => 'type'),  	
+	array('data' => t('Product Price Value'),'field' => 'product_price_value')
   );
 
   # set the database table
@@ -58,7 +59,23 @@ function products_menu() {
 
   # build the table fields
   $rows = array();
-  foreach ($results as $row) { $rows[] = array($row->nid,$row->title,$row->status,$row->created,$row->changed,$row->type);  }
+  foreach ($results as $row) { 
+  
+  $nid = $row->nid;
+  $node = node_load($nid);  
+  
+  $rows[] = array(
+		$row->nid,	
+		$row->title,
+		$row->status,
+		//$row->created,
+		//$row->changed,		
+	    'created' => format_date($row->created, 'custom', 'd-m-Y'),
+        'changed' => format_date($row ->changed, 'custom', 'd-m-Y'),
+		$row->type,
+		$node->product_price[LANGUAGE_NONE][0]['value']
+	    ); 
+		}
   $output = theme('table', array('header' => $header, 'rows' => $rows ));
 
   # add the pager
