@@ -1,0 +1,94 @@
+<?php
+/**
+ * Implements hook_node_info()
+ */
+function products_node_info() {
+    return array(
+        'product' => array(
+            'name' => t('Product'),
+            'base' => 'product',
+            'description' => t('You can define new Products here'),
+            'has_title' => TRUE,
+            'title_label' => t('Product title')
+         )
+    );
+}
+/**
+ * Implements hook_menu()
+ */
+function products_menu() {
+  $items['list-product-data'] = array(
+      'title' => t('Your Products'),
+      'description' => 'Your Products',
+      'page callback' => 'get_product_listing_form',
+      //'page arguments' => array(          'get_product_listing_form'      ),
+      // 'access arguments' => array(
+          // 'access content'
+      // ),
+	  'access callback' => TRUE,
+      // 'type' => MENU_NORMAL_ITEM
+  );
+  return $items;
+  }
+  /*****************method 1**************************/
+  
+  
+  function get_product_listing_form() {
+
+  $header = array(
+  //'Nid', 'Title', 'Status', 'Created','changed','type'
+	array('data' => t('Nid'),'field' => 'nid'),
+    array('data' => t('Title'),'field' => 'title'),
+    array('data' => t('Status'),'field' => 'status'),
+    array('data' => t('Created'),'field' => 'created'),
+    array('data' => t('Changed'),'field' => 'changed'),
+	array('data' => t('Type'),'field' => 'type'),  	
+	array('data' => t('Product Price Value'),'field' => 'product_price_value')
+  );
+
+  # set the database table
+  $query = db_select('node', 'n')->extend('PagerDefault')->extend('TableSort') ->orderByHeader($header);  
+
+  # get the desired fields from the database
+  $query->condition('type', 'products')
+		->fields('n', array('nid', 'title', 'status', 'created', 'changed','type'))        
+        ->limit(10);
+
+  # execute the query
+  $results = $query->execute();
+
+  # build the table fields
+  $rows = array();
+  foreach ($results as $row) { 
+  
+  $nid = $row->nid;
+  $node = node_load($nid);  
+  
+  $rows[] = array(
+		$row->nid,	
+		$row->title,
+		$row->status,
+		//$row->created,
+		//$row->changed,		
+	    'created' => format_date($row->created, 'custom', 'd-m-Y'),
+        'changed' => format_date($row ->changed, 'custom', 'd-m-Y'),
+		$row->type,
+		$node->product_price[LANGUAGE_NONE][0]['value']
+	    ); 
+		}
+  $output = theme('table', array('header' => $header, 'rows' => $rows ));
+
+  # add the pager
+  $output .= theme('pager');
+
+  return $output;
+
+}
+  
+/**
+ * Implement hook_form()
+ */
+function product_form($node, $form_state) {
+    return node_content_form($node, $form_state);
+}
+

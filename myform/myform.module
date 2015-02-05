@@ -4,7 +4,7 @@ function myform_menu() {
   $items = array();
 
  
-$items['myform/form1'] = array( //this creates a URL that will call this form at "examples/form-example"
+$items['myform/form1'] = array( //this creates a URL that will call this form at "examples/form-example 12"
     'title' => 'Example Form', //page title
     'description' => 'A form to mess around with.',
     'page callback' => 'drupal_get_form', //this is the function that will be called when the page is accessed.  for a form, use drupal_get_form

@@ -1,0 +1,43 @@
+<?php
+function user_registration_schema() {
+     // specification for 'registration' table.
+ $schema['user_registration'] = array(
+    'description' => t('The base table for nodes.'),
+    'fields' => array( 
+	
+      'first_name' => array(
+        'description' => t('First name.'),
+        'type' => 'varchar',
+        'length' => 32),	
+		
+	  'last_name' => array(
+        'description' => t('Last name.'),
+        'type' => 'varchar',
+        'length' => 32),
+		
+	  'number' => array(
+        'description' => t('Mobile Number'),
+        'type' => 'varchar',
+        'length' => 25),
+		
+	  'address' => array(
+        'description' => t('Address.'),
+        'type' => 'varchar',
+        'length' => 100),
+		
+	 'age' => array(
+        'description' => t('Age.'),
+        'type' => 'int',
+        'length' => 3),	
+		
+	  'country' => array(
+        'description' => t('Country name.'),
+        'type' => 'varchar',
+        'length' => 20),
+      ),
+
+    
+    );
+	 return $schema;
+}
+?>

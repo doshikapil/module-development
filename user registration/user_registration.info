@@ -1,0 +1,3 @@
+name = user_registration
+description = This module creates a form using Drupal to save user details.
+core = 7.x

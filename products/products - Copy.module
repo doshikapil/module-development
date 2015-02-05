@@ -1,0 +1,104 @@
+<?php
+/**
+ * Implements hook_node_info()
+ */
+function products_node_info() {
+    return array(
+        'product' => array(
+            'name' => t('Product'),
+            'base' => 'product',
+            'description' => t('You can define new Products here'),
+            'has_title' => TRUE,
+            'title_label' => t('Product title')
+         )
+    );
+}
+/**
+ * Implements hook_menu()
+ */
+function products_menu() {
+  $items['list-product-data'] = array(
+      'title' => t('Your Products'),
+      'description' => 'Your Products',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array(
+          'get_product_listing_form'
+      ),
+      // 'access arguments' => array(
+          // 'access content'
+      // ),
+	  'access callback' => TRUE,
+      // 'type' => MENU_NORMAL_ITEM
+  );
+  return $items;
+  }
+  
+  function get_product_listing_form() {
+  $header = array(
+    array(
+      'data' => t('Nid'),
+      'field' => 'nid'
+    ),
+    array(
+      'data' => t('Title'),
+      'field' => 'title'
+    ),
+    array(
+      'data' => t('Status'),
+      'field' => 'status'
+    ),
+    array(
+      'data' => t('Created'),
+      'field' => 'created'
+    ),
+    array(
+      'data' => t('Updated'),
+      'field' => 'changed'
+    ),
+  );
+  
+  
+  $data = array();
+  
+  # set the database table
+  $query = db_select('node', 'n')->extend('PagerDefault')->extend('TableSort') ->orderByHeader($header);
+  
+  # configure the query
+  $query->fields('n', array('nid', 'title',  'status',  'created',  'changed', // 'created' => format_date($node->created, 'short')
+))->limit(10);
+
+
+ 
+  # execute the query
+  $results = $query->execute();
+  $rows    = array();
+
+  foreach ($results as $row) {
+    $data[] = array(
+      $row->nid,
+      $row->title,
+      $row->status,
+      $row->created,
+      $row->changed
+    );
+  }
+  $form['nodes'] = array(
+    '#type' => 'tableselect',
+    '#header' => $header,
+    '#options' => $data,
+    '#empty' => t('No content available.'),
+  );
+    $output = theme('table', 
+                  array('header' => $header, 
+  	                'rows' => $data ));
+  $form['pager'] = array('#markup' => theme('pager'));
+  return $form;
+
+}
+/**
+ * Implement hook_form()
+ */
+function product_form($node, $form_state) {
+    return node_content_form($node, $form_state);
+}
+
